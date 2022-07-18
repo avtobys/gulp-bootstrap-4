@@ -1,12 +1,12 @@
 // пути
-const PATH_BUILD = './dist';
+const PATH_BUILD = ['./dist', './app'];
 const PATH_BUILD_HTML = 'dist/';
 const PATH_BUILD_JS = 'dist/tpl/js/';
 const PATH_BUILD_CSS = 'dist/tpl/css/';
 const PATH_BUILD_IMG = 'dist/tpl/img/';
 const PATH_BUILD_FONTS = 'dist/tpl/css/fonts/';
 
-const PATH_SRC_HTML = 'app/*.html';
+const PATH_SRC_HTML = ['app/*.html', '!app/ui-*.html'];
 const PATH_SRC_JS = 'app/js/main.js';
 const PATH_SRC_CSS = 'app/scss/main.scss';
 const PATH_SRC_IMG = 'app/img/**/*.*';
@@ -51,6 +51,7 @@ gulp.task('browser-sync', () => {
       baseDir: PATH_BUILD,
       directory: true
     },
+    startPath: "/ui-panel.html",
     notify: false
   })
 });
@@ -69,10 +70,10 @@ gulp.task('css:build', () => {
     .pipe(sourcemaps.init({ largeFile: true }))
     .pipe(sass({ outputStyle: 'expanded' }).on('error', notify.onError())) // scss -> css
     .pipe(autoprefixer()) // добавим префиксы
-    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(PATH_BUILD_CSS))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(cleanCss()) // минимизируем CSS
+    .pipe(rename({ suffix: '.min', prefix : '' }))
+    .pipe(cleanCss({ level: { 1: { specialComments: 0 } } })) // минимизируем CSS
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(PATH_BUILD_CSS))
     .pipe(browserSync.stream()) // перезагрузим сервер
 });
